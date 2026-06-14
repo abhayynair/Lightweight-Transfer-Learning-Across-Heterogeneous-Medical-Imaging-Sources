@@ -2,7 +2,7 @@
 
 ### An Empirical Study of Lightweight Transfer Learning Across Heterogeneous Medical Imaging Sources
 
-** IPYNB AVAILABLE ON: https://www.kaggle.com/code/ab0y04/skin-lesion-imagenet**
+**IPYNB AVAILABLE ON: https://www.kaggle.com/code/ab0y04/skin-lesion-imagenet**
 
 **Minor Specialization Project — Computational Intelligence**
 Department of Computer Science \& Engineering, Manipal Institute of Technology, MAHE
