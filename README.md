@@ -184,47 +184,7 @@ The custom CNN's matrix shows mass concentrated toward the nevus and df columns 
 
 \---
 
-## 4\. Repository Structure
-
-```
-.
-├── README.md
-├── notebooks/
-│   └── skin\\\_lesion\\\_4model\\\_comparison.ipynb   # Full training + evaluation pipeline
-├── models/
-│   ├── best\\\_custom\\\_cnn.keras
-│   ├── best\\\_mobilenet\\\_v2.keras
-│   ├── best\\\_efficientnet\\\_v4.keras
-│   └── best\\\_resnet50\\\_v2.keras
-├── results/
-│   ├── training\\\_logs/
-│   │   ├── efficientnet\\\_training\\\_log.csv     # Phase 2 (30 epochs)
-│   │   ├── efficientnet\\\_v2\\\_log.csv           # Continuation 1 (20 epochs)
-│   │   ├── efficientnet\\\_v3\\\_log.csv           # Continuation 2 (20 epochs)
-│   │   ├── efficientnet\\\_v4\\\_log.csv           # Continuation 3 (20 epochs)
-│   │   ├── mobilenet\\\_log.csv                 # Phase 2 (30 epochs)
-│   │   ├── mobilenet\\\_v2\\\_log.csv              # Continuation (18 epochs)
-│   │   ├── resnet50\\\_log.csv                  # Phase 2 (30 epochs)
-│   │   └── resnet50\\\_v2\\\_log.csv               # Continuation (20 epochs)
-│   └── figures/
-│       ├── confusion\\\_matrices\\\_all4.png
-│       ├── gradcam\\\_melanoma.png
-│       ├── gradcam\\\_bcc.png
-│       └── gradcam\\\_df.png
-├── reports/
-│   ├── Week1\\\_Progress\\\_Report.docx
-│   ├── Week2\\\_Progress\\\_Report.docx
-│   └── Week3\\\_Progress\\\_Report.docx
-└── docs/
-    ├── synopsis.pdf                          # Minor project synopsis
-    └── technical\\\_implementation\\\_plan.pdf     # Full experimental design document
-```
-
-> Note: Phase 1 (frozen-backbone, head-only) training logs for EfficientNetB0, MobileNetV2, and ResNet50 were not separately saved as CSVs; their per-epoch validation accuracies are recorded in the Week 3 progress report.
-
-\---
-
-## 5\. Environment \& Reproducibility
+## 4\. Environment \& Reproducibility
 
 |||
 |-|-|
@@ -240,7 +200,7 @@ The custom CNN's matrix shows mass concentrated toward the nevus and df columns 
 
 \---
 
-## 6\. Roadmap
+## 5\. Roadmap
 
 * \[x] Skin lesion: 4-model pooled training, evaluation, statistical validation, Grad-CAM, confusion matrices
 * \[ ] Skin lesion: cross-source baseline (train ISIC-only → test HAM-only, and vice versa)
@@ -254,7 +214,7 @@ The custom CNN's matrix shows mass concentrated toward the nevus and df columns 
 
 \---
 
-## 7\. Acknowledgments
+## 6\. Acknowledgments
 
 This project builds directly on prior work in CUDA-accelerated structural crack detection, which first surfaced the implicit-domain-adaptation pattern this study formalizes and tests.
 
@@ -262,7 +222,7 @@ Portions of the code in this repository (data pipeline construction, model train
 
 \---
 
-## 8\. Citation
+## 7\. Citation
 
 If you use this work, please cite (paper details to be updated upon publication):
 
