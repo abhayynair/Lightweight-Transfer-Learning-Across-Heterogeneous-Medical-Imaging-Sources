@@ -1,7 +1,9 @@
 # Lightweight Transfer Learning Across Heterogeneous Medical Imaging Sources
 
 SKIN: https://www.kaggle.com/code/ab0y04/skin-lesion-imagenet
+
 CHEST: https://www.kaggle.com/code/nihalabhay/chest-imagenet
+
 DR: https://www.kaggle.com/code/asivakumarnair/diabetic-retinopathy-imagenet
 
 ## What this project tests
