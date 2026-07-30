@@ -1,5 +1,7 @@
 # Skin Lesion Classification: Implicit Domain Adaptation via Lightweight Pretrained CNNs
 
+LINK TO KAGGLE NOTEBOOK: https://www.kaggle.com/code/ab0y04/skin-lesion-imagenet
+
 ## Overview
 
 This task benchmarks four CNN architectures, one trained from scratch and three ImageNet pretrained (EfficientNetB0, MobileNetV2, ResNet50), on multi source dermoscopic skin lesion classification across two genuinely disjoint clinical sources: ISIC 2019 and HAM10000. The central hypothesis is that lightweight ImageNet pretrained CNNs pick up something resembling automatic cross institution domain adaptation purely from having been pretrained on a large, diverse natural image corpus, without any explicit domain adaptation technique applied. A model trained entirely from scratch, with no such prior exposure, should not show this property to the same degree.
