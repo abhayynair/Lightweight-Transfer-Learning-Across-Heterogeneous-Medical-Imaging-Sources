@@ -219,7 +219,3 @@ Directional read so far, not yet statistically tested: accuracy and AUC both cli
 6. Stage 13, MMD both directions on the 12 single-source models, plus the added pooled-model reference comparison, tagged by `model_type`
 7. Stage 14, fine-tune depth ablation
 8. Stage 15 to 17, McNemar and DeLong statistical testing, Grad-CAM interpretability, final writeup
-
-## Open item, not yet resolved in this session
-
-D-dr-3 (from the original manual): whether Stage 16 uses full 5-fold cross-validation or a reduced top-2-architecture approach was flagged as needing Dr. Cunha's input this week, given GPU quota math (Stage 16 alone estimated at 40 to 75 GPU hours out of a 75 to 135 hour total pipeline, against roughly 30 hours per Kaggle account per week and a five-week runway to the September target). This is the same decision needed across all three tasks (skin D2, chest D-chest-3, DR D-dr-3) and was recommended to be resolved as one conversation with Dr. Cunha rather than three separate ones. Not yet confirmed resolved as of this session.
