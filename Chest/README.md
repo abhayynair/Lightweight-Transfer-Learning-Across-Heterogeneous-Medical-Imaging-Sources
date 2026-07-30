@@ -1,5 +1,7 @@
 # Chest X-Ray Pathology Detection
 
+LINK TO KAGGLE NOTEBOOK: https://www.kaggle.com/code/nihalabhay/chest-imagenet
+
 This folder contains the chest X-ray arm of a three-task study testing whether lightweight ImageNet-pretrained CNNs (EfficientNetB0, MobileNetV2, ResNet50) exhibit implicit domain adaptation when trained on pooled data from heterogeneous, disjoint sources, while a custom CNN trained from scratch does not. The other two arms are skin lesion classification and diabetic retinopathy grading, in their respective sibling folders. This document covers chest specifically.
 
 The core hypothesis, stated plainly: pretrained models can actively exploit cross-source heterogeneous data during training, extracting something useful from the fact that the data comes from multiple devices and populations, while a custom CNN trained from scratch on the same pooled data cannot, and may even be hurt by it. Chest X-ray is a binary presence-detection task (pathology present or absent), which makes it structurally the cleanest of the three tasks, since it avoids the label-harmonization problems that come with multi-class or ordinal grading across sources that each use their own vocabulary.
