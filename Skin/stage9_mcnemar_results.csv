@@ -1,0 +1,7 @@
+pair,custom_cnn_only_correct,mobilenetv2_only_correct,statistic,p_value,efficientnetb0_only_correct,resnet50_only_correct,holm_alpha,significant_holm
+Custom CNN vs ResNet50,216.0,,640.8532846715328,2.1795311225994542e-141,,1154.0,0.008333333333333333,True
+Custom CNN vs EfficientNetB0,243.0,,555.1617429837519,9.486603136376266e-123,1111.0,,0.01,True
+Custom CNN vs MobileNetV2,263.0,1045.0,466.3310397553517,2.0145028515745113e-103,,,0.0125,True
+MobileNetV2 vs ResNet50,,281.0,33.46100278551532,7.270729071710437e-09,,437.0,0.016666666666666666,True
+MobileNetV2 vs EfficientNetB0,,295.0,10.687869822485206,0.001078403101109337,381.0,,0.025,True
+EfficientNetB0 vs ResNet50,,,6.920058139534884,0.008523420487891802,309.0,379.0,0.05,True

@@ -1,0 +1,145 @@
+model,true,pred,count
+Custom CNN,bcc,bcc,198
+Custom CNN,bcc,bkl,119
+Custom CNN,bcc,df,53
+Custom CNN,bcc,melanoma,63
+Custom CNN,bcc,nevus,50
+Custom CNN,bcc,vasc,5
+Custom CNN,bkl,bcc,65
+Custom CNN,bkl,bkl,117
+Custom CNN,bkl,df,35
+Custom CNN,bkl,melanoma,85
+Custom CNN,bkl,nevus,68
+Custom CNN,bkl,vasc,9
+Custom CNN,df,bcc,9
+Custom CNN,df,bkl,3
+Custom CNN,df,df,9
+Custom CNN,df,melanoma,4
+Custom CNN,df,nevus,5
+Custom CNN,df,vasc,0
+Custom CNN,melanoma,bcc,30
+Custom CNN,melanoma,bkl,102
+Custom CNN,melanoma,df,26
+Custom CNN,melanoma,melanoma,277
+Custom CNN,melanoma,nevus,200
+Custom CNN,melanoma,vasc,9
+Custom CNN,nevus,bcc,143
+Custom CNN,nevus,bkl,222
+Custom CNN,nevus,df,74
+Custom CNN,nevus,melanoma,328
+Custom CNN,nevus,nevus,1136
+Custom CNN,nevus,vasc,52
+Custom CNN,vasc,bcc,10
+Custom CNN,vasc,bkl,3
+Custom CNN,vasc,df,0
+Custom CNN,vasc,melanoma,5
+Custom CNN,vasc,nevus,0
+Custom CNN,vasc,vasc,21
+MobileNetV2,bcc,bcc,393
+MobileNetV2,bcc,bkl,29
+MobileNetV2,bcc,df,7
+MobileNetV2,bcc,melanoma,38
+MobileNetV2,bcc,nevus,9
+MobileNetV2,bcc,vasc,12
+MobileNetV2,bkl,bcc,34
+MobileNetV2,bkl,bkl,238
+MobileNetV2,bkl,df,7
+MobileNetV2,bkl,melanoma,38
+MobileNetV2,bkl,nevus,61
+MobileNetV2,bkl,vasc,1
+MobileNetV2,df,bcc,3
+MobileNetV2,df,bkl,15
+MobileNetV2,df,df,7
+MobileNetV2,df,melanoma,2
+MobileNetV2,df,nevus,3
+MobileNetV2,df,vasc,0
+MobileNetV2,melanoma,bcc,39
+MobileNetV2,melanoma,bkl,86
+MobileNetV2,melanoma,df,3
+MobileNetV2,melanoma,melanoma,379
+MobileNetV2,melanoma,nevus,133
+MobileNetV2,melanoma,vasc,4
+MobileNetV2,nevus,bcc,54
+MobileNetV2,nevus,bkl,149
+MobileNetV2,nevus,df,11
+MobileNetV2,nevus,melanoma,235
+MobileNetV2,nevus,nevus,1500
+MobileNetV2,nevus,vasc,6
+MobileNetV2,vasc,bcc,5
+MobileNetV2,vasc,bkl,0
+MobileNetV2,vasc,df,0
+MobileNetV2,vasc,melanoma,7
+MobileNetV2,vasc,nevus,4
+MobileNetV2,vasc,vasc,23
+EfficientNetB0,bcc,bcc,390
+EfficientNetB0,bcc,bkl,24
+EfficientNetB0,bcc,df,18
+EfficientNetB0,bcc,melanoma,38
+EfficientNetB0,bcc,nevus,10
+EfficientNetB0,bcc,vasc,8
+EfficientNetB0,bkl,bcc,34
+EfficientNetB0,bkl,bkl,256
+EfficientNetB0,bkl,df,4
+EfficientNetB0,bkl,melanoma,41
+EfficientNetB0,bkl,nevus,44
+EfficientNetB0,bkl,vasc,0
+EfficientNetB0,df,bcc,3
+EfficientNetB0,df,bkl,7
+EfficientNetB0,df,df,14
+EfficientNetB0,df,melanoma,3
+EfficientNetB0,df,nevus,3
+EfficientNetB0,df,vasc,0
+EfficientNetB0,melanoma,bcc,34
+EfficientNetB0,melanoma,bkl,58
+EfficientNetB0,melanoma,df,2
+EfficientNetB0,melanoma,melanoma,405
+EfficientNetB0,melanoma,nevus,143
+EfficientNetB0,melanoma,vasc,2
+EfficientNetB0,nevus,bcc,46
+EfficientNetB0,nevus,bkl,120
+EfficientNetB0,nevus,df,12
+EfficientNetB0,nevus,melanoma,233
+EfficientNetB0,nevus,nevus,1540
+EfficientNetB0,nevus,vasc,4
+EfficientNetB0,vasc,bcc,5
+EfficientNetB0,vasc,bkl,6
+EfficientNetB0,vasc,df,1
+EfficientNetB0,vasc,melanoma,4
+EfficientNetB0,vasc,nevus,2
+EfficientNetB0,vasc,vasc,21
+ResNet50,bcc,bcc,394
+ResNet50,bcc,bkl,27
+ResNet50,bcc,df,14
+ResNet50,bcc,melanoma,32
+ResNet50,bcc,nevus,13
+ResNet50,bcc,vasc,8
+ResNet50,bkl,bcc,26
+ResNet50,bkl,bkl,234
+ResNet50,bkl,df,7
+ResNet50,bkl,melanoma,48
+ResNet50,bkl,nevus,64
+ResNet50,bkl,vasc,0
+ResNet50,df,bcc,4
+ResNet50,df,bkl,7
+ResNet50,df,df,12
+ResNet50,df,melanoma,0
+ResNet50,df,nevus,7
+ResNet50,df,vasc,0
+ResNet50,melanoma,bcc,40
+ResNet50,melanoma,bkl,74
+ResNet50,melanoma,df,10
+ResNet50,melanoma,melanoma,351
+ResNet50,melanoma,nevus,169
+ResNet50,melanoma,vasc,0
+ResNet50,nevus,bcc,30
+ResNet50,nevus,bkl,94
+ResNet50,nevus,df,18
+ResNet50,nevus,melanoma,124
+ResNet50,nevus,nevus,1686
+ResNet50,nevus,vasc,3
+ResNet50,vasc,bcc,3
+ResNet50,vasc,bkl,2
+ResNet50,vasc,df,3
+ResNet50,vasc,melanoma,7
+ResNet50,vasc,nevus,5
+ResNet50,vasc,vasc,19
