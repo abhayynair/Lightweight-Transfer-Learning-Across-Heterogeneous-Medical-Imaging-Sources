@@ -36,8 +36,6 @@ Every dataset path, column name, and count referenced anywhere in this project w
 
 One open decision applies to all three tasks: whether Stage 16 (five-fold cross-validation) runs in full across all four architectures or a reduced scope, given it is the single largest remaining GPU-hour cost in every task. This is being treated as one decision rather than three, since the same tradeoff and the same shared weekly GPU quota apply across all of them.
 
-One documented cross-task inconsistency worth flagging rather than hiding: vertical flip augmentation is disabled in all three tasks, but the stated reasoning differs between them, skin and chest describe it as a locked cross-task consistency choice, while the diabetic retinopathy README states it separately as being because retinal images have a meaningful up/down orientation. Both are defensible reasons to reach the same setting, but the writeup should state one consistent justification rather than let this read as an unexamined coincidence.
-
 ## Reproducing this work
 
 Every task folder is self-contained: its README documents the exact dataset paths, verified counts, split logic, class weights, environment pins, and stage-by-stage status needed to reproduce that task independently. Start with the task-specific README for implementation detail, this document exists only to orient across all three.
