@@ -1,5 +1,7 @@
 # Diabetic Retinopathy: Implicit Domain Adaptation Across Fundus Photography Sources
 
+LINK TO KAGGLE NOTEBOOK: https://www.kaggle.com/code/asivakumarnair/diabetic-retinopathy-imagenet
+
 ## Hypothesis
 
 Pretrained CNNs (EfficientNetB0, MobileNetV2, ResNet50) trained on data pooled across multiple heterogeneous fundus photography sources actively exploit that cross source variation, features learned on one source transfer and generalize to others. A custom CNN trained from scratch on the same pooled data shows no equivalent gain, because it lacks the pretrained feature basis needed to exploit heterogeneity. This mirrors the skin and chest tasks in the same project, testing whether the effect is a property of pretraining itself rather than a coincidence of any one dataset.
