@@ -1,5 +1,9 @@
 # Lightweight Transfer Learning Across Heterogeneous Medical Imaging Sources
 
+SKIN: https://www.kaggle.com/code/ab0y04/skin-lesion-imagenet
+CHEST: https://www.kaggle.com/code/nihalabhay/chest-imagenet
+DR: https://www.kaggle.com/code/asivakumarnair/diabetic-retinopathy-imagenet
+
 ## What this project tests
 
 The central hypothesis: ImageNet-pretrained lightweight CNNs (EfficientNetB0, MobileNetV2, ResNet50) exhibit something resembling automatic domain adaptation when trained on data pooled from multiple heterogeneous, disjoint clinical sources, purely as a byproduct of having been pretrained on a large, diverse natural image corpus, with no explicit domain adaptation technique applied. A CNN trained entirely from scratch, with no such prior exposure, does not show this property to the same degree, and may even be actively hurt by the heterogeneity that the pretrained models exploit.
