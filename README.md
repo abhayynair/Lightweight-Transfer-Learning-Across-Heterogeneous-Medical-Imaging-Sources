@@ -1,239 +1,43 @@
-# Implicit Domain Adaptation Through Pretrained Feature Reuse
+# Lightweight Transfer Learning Across Heterogeneous Medical Imaging Sources
 
-### An Empirical Study of Lightweight Transfer Learning Across Heterogeneous Medical Imaging Sources
+## What this project tests
 
-**IPYNB AVAILABLE ON: https://www.kaggle.com/code/ab0y04/skin-lesion-imagenet**
+The central hypothesis: ImageNet-pretrained lightweight CNNs (EfficientNetB0, MobileNetV2, ResNet50) exhibit something resembling automatic domain adaptation when trained on data pooled from multiple heterogeneous, disjoint clinical sources, purely as a byproduct of having been pretrained on a large, diverse natural image corpus, with no explicit domain adaptation technique applied. A CNN trained entirely from scratch, with no such prior exposure, does not show this property to the same degree, and may even be actively hurt by the heterogeneity that the pretrained models exploit.
 
-**Minor Specialization Project — Computational Intelligence**
-Department of Computer Science \& Engineering, Manipal Institute of Technology, MAHE
+This is tested identically across three independent medical imaging tasks, each with its own genuinely disjoint, real-world heterogeneous data sources: skin lesion classification, chest X-ray pathology detection, and diabetic retinopathy grading. If the same pattern holds across all three, that is evidence the effect is a property of pretraining itself, not a coincidence specific to one dataset or one imaging modality.
 
-**Team:** Abhay Sivakumar Nair (220905199) · Shruthi Andra (230905223)
-**Guide:** Dr. Tyson B D Cunha
-**Target venue:** IEEE Access (submission targeted September 2026)
+## Shared methodology across all three tasks
 
-\---
+The same four architectures are benchmarked in every task: a custom three-block CNN trained from scratch (Conv2D and BatchNormalization pairs at 32, 64, and 128 filters, GlobalAveragePooling2D, Dense(256), Dropout, softmax output), and three ImageNet-pretrained backbones (EfficientNetB0, MobileNetV2, ResNet50) with `include_top=False`, wrapped identically and trained in two phases, a frozen-backbone phase followed by a full fine-tune phase.
 
-## 1\. Overview
+All three tasks share the same 17-stage pipeline shape: environment setup, data cleaning and verification, splitting, class weighting, model definitions, pooled training for all four architectures, locked pooled results, pairwise statistical testing, confusion matrices and Grad-CAM, a single-source baseline (each architecture trained in isolation on each individual source, the load-bearing control that separates genuine domain gap from simple architecture capacity differences), a cross-source evaluation matrix built by reusing the single-source models with no retraining, Maximum Mean Discrepancy analysis in feature space, a fine-tuning depth ablation, a CORAL domain-alignment baseline, five-fold cross-validation, and final results compilation.
 
-This project investigates whether lightweight ImageNet-pretrained convolutional neural networks (EfficientNetB0, MobileNetV2, ResNet50) provide **implicit domain adaptation** across heterogeneous medical imaging sources, removing the need for computationally expensive explicit alignment techniques such as adversarial domain adaptation or GAN-based style transfer.
+The same statistical standard is used throughout: McNemar's test with Holm correction for all pairwise architecture comparisons, and correlated DeLong as the primary AUC comparison test rather than the naive independent-samples version, since all architectures in a given task are evaluated on the same shared test set and their AUC estimates are therefore statistically dependent. Plain DeLong is reported alongside correlated DeLong in every task specifically to expose the discrepancy between the two, since on both skin and chest this discrepancy changed which architecture pairs were found significant.
 
-The hypothesis is motivated by prior empirical work in structural crack detection, where a custom CNN trained from scratch achieved 99.77% accuracy on single-source data but degraded to 88.96% on pooled multi-source data with unstable convergence, while EfficientNetB0 under identical conditions achieved 98.14% with stable convergence. This project systematically tests whether that pattern holds for medical imaging, where cross-hospital, cross-scanner, and cross-population generalization failures are well documented and clinically significant.
+All three tasks run on Kaggle Notebooks, TensorFlow 2.19.0 with the legacy Keras 2 backend forced via `TF_USE_LEGACY_KERAS=1` (set before TensorFlow's first import, since Kaggle's default environment has been observed to drift to Keras 3 across sessions), Tesla T4 GPUs run single-GPU rather than via a multi-GPU strategy (to avoid altering batch normalization statistics across architectures), and seed 42 throughout.
 
-**Planned scope:** three diagnostic tasks — skin lesion classification, chest X-ray pathology detection, and diabetic retinopathy grading — each evaluated across multiple heterogeneous data sources.
+Every dataset path, column name, and count referenced anywhere in this project was verified live against the actual mounted files before being used, not assumed from documentation. Each task's own README documents the specific contamination risks, leakage bugs, and near misses this live verification caught and fixed.
 
-**Status:** Skin lesion classification (Phase 1) is complete. Chest X-ray and diabetic retinopathy experiments are planned next.
+## The three tasks
 
-\---
+**[Skin](./Skin)**: ISIC 2019 and HAM10000 dermoscopic images, six-class lesion classification. Heterogeneity here comes from different clinical institutions and dermoscope equipment. ISIC 2019 was discovered to actually contain HAM10000 as a subset, requiring the two sources to be made genuinely disjoint before any comparison could be valid.
 
-## 2\. Core Hypothesis
+**[Chest](./Chest)**: CheXpert, NIH ChestX-ray14, and VinBigData, binary pathology presence detection. Heterogeneity comes from different scanners, populations, and labeling processes across three sources with incompatible pathology vocabularies, which is why this task uses binary rather than multi-class labels. The three sources also have deliberately different pathology prevalence (90.0, 46.2, and 29.3 percent), treated as a second, real axis of domain gap rather than balanced away.
 
-> Lightweight ImageNet-pretrained CNNs encode sufficiently domain-invariant feature representations to bridge scanner-induced and population-induced distribution shifts in medical images — without any explicit domain alignment mechanism — while custom CNNs trained from scratch on the same pooled data fail to generalize across sources.
+**[Diabetic Retinopathy](./Diabetic%20Retinopathy)**: APTOS 2019, EyePACS, and Messidor-2 fundus photographs, five-class ordinal grading. Heterogeneity comes from different cameras, countries, and acquisition protocols, directly measurable in a colour and resolution profile across the three sources. EyePACS's dataset download was found to also contain the APTOS competition images under a different folder name, requiring explicit exclusion.
 
-\---
+## Status at a glance
 
-## 3\. Skin Lesion Experiment (Complete)
+| Task | Pooled training (Stages 4-7) | Pooled results locked | Single-source baseline (Stage 11) | Cross-source and MMD (12-13) | Overall |
+|---|---|---|---|---|---|
+| Skin | Done | Done | Done, 8/8 models | Done | Furthest along. Stage 15 (CORAL) in progress, Stage 16 (5-fold) not started |
+| Chest | Done | Done | In progress, 9/12 models | Not started | Mid-pipeline. Stages 0-10 fully locked |
+| Diabetic Retinopathy | In progress, 3/4 done (ResNet50 rerunning after a session-restart loss) | Not yet | Not started | Not started | Earliest stage. Stages 0-6 done |
 
-### 3.1 Datasets
+One open decision applies to all three tasks: whether Stage 16 (five-fold cross-validation) runs in full across all four architectures or a reduced scope, given it is the single largest remaining GPU-hour cost in every task. This is being treated as one decision rather than three, since the same tradeoff and the same shared weekly GPU quota apply across all of them.
 
-|Dataset|Source / Origin|Images Used|Classes|
-|-|-|-|-|
-|[ISIC 2019](https://www.kaggle.com/datasets/andrewmvd/isic-2019)|Global, multi-institution|25,331|6 shared|
-|[HAM10000](https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000)|Vienna + Australia (multi-dermatoscope)|9,688|6 shared|
-|**Combined (pooled)**|Multi-source|**35,019**|**6**|
+One documented cross-task inconsistency worth flagging rather than hiding: vertical flip augmentation is disabled in all three tasks, but the stated reasoning differs between them, skin and chest describe it as a locked cross-task consistency choice, while the diabetic retinopathy README states it separately as being because retinal images have a meaningful up/down orientation. Both are defensible reasons to reach the same setting, but the writeup should state one consistent justification rather than let this read as an unexamined coincidence.
 
-**Shared diagnostic classes:** melanoma, nevus, basal cell carcinoma (bcc), benign keratosis (bkl), dermatofibroma (df), vascular lesion (vasc). Classes present in only one dataset (`AK`, `SCC` from ISIC 2019; `akiec` from HAM10000) were dropped to retain a common label space across both sources.
+## Reproducing this work
 
-### 3.2 Data Pipeline
-
-* Each source's metadata was mapped to a unified label set and tagged with a `source` column (`isic2019` / `ham10000`) for domain-aware analysis.
-* **Stratified 70/15/15 train/val/test split**, performed independently per source then concatenated, ensuring both sources and all six classes are proportionally represented in every split.
-
-  * Train: 24,512 images
-  * Validation: 5,253 images
-  * Test: 5,254 images
-* **Class weighting** (`sklearn.utils.class\\\_weight.compute\\\_class\\\_weight`, balanced) applied during training to address severe class imbalance (nevus: 19,580 images vs. df: 354 images across the combined dataset).
-* **Data augmentation** (training only): rotation, width/height shift, horizontal flip, zoom.
-* **Preprocessing:** each architecture uses its own standard preprocessing function (`efficientnet\\\_preprocess`, `mobilenet\\\_preprocess`, `resnet\\\_preprocess` for the pretrained models; rescale-to-\[0,1] for the custom CNN), per each architecture's original specification.
-
-### 3.3 Model Architectures
-
-|Model|Parameters|Pretraining|Notes|
-|-|-|-|-|
-|**Custom CNN**|322,470|None (random init)|3-block CNN: Conv→BN→Conv→BN→MaxPool→Dropout per block (32→64→128 filters), GlobalAvgPool, Dense(256), Dense(6, softmax)|
-|**MobileNetV2**|2,587,462|ImageNet|`include\\\_top=False` backbone + GlobalAvgPool, Dense(256), Dropout(0.3), Dense(6, softmax)|
-|**EfficientNetB0**|4,379,049|ImageNet|Same head structure as MobileNetV2|
-|**ResNet50**|24,113,798|ImageNet|Same head structure as MobileNetV2|
-
-All three pretrained models follow a **two-phase fine-tuning protocol**:
-
-* **Phase 1:** backbone frozen, train classification head only (Adam, lr=1e-3)
-* **Phase 2:** full backbone unfrozen, fine-tune end-to-end (Adam, lr=1e-5), with `EarlyStopping` (patience=7, restore best weights) and `ModelCheckpoint` on `val\\\_accuracy`
-
-The custom CNN is trained from scratch for up to 30 epochs with the same early-stopping protocol.
-
-### 3.4 Training Summary
-
-|Model|Total Epochs (all phases)|Best Val Accuracy|
-|-|-|-|
-|Custom CNN|27 (early stopped)|57.66%|
-|MobileNetV2|58 (Phase 1 + Phase 2 + continuation)|74.81%|
-|EfficientNetB0|100 (Phase 1 + Phase 2 + 3 continuations)|82.58%|
-|ResNet50|60 (Phase 1 + Phase 2 + continuation)|88.03%|
-
-Per-phase training curves (CSV logs) are in [`results/training\\\_logs/`](results/training_logs/).
-
-### 3.5 Final Test Set Results
-
-Evaluated on the held-out test set (5,254 images, never seen during training):
-
-|Model|Test Accuracy|Macro F1|Macro AUC|Gap vs Custom CNN|
-|-|-|-|-|-|
-|Custom CNN|**52.84%**|0.29|0.754|—|
-|MobileNetV2|**76.63%**|0.73|0.957|+23.79 pts|
-|EfficientNetB0|**82.98%**|0.81|0.972|+30.14 pts|
-|ResNet50|**88.35%**|0.85|0.981|+35.51 pts|
-
-**All three pretrained architectures outperform the custom CNN by 24–35.5 percentage points on identical pooled multi-source data**, supporting the implicit domain adaptation hypothesis. ResNet50 achieves the highest raw accuracy but shows the largest train–validation gap (97.5% train vs 88.0% val), indicating overfitting given its 24.1M parameters relative to the 24,512-image training set; EfficientNetB0 and MobileNetV2 show smaller train–val gaps.
-
-### 3.6 Statistical Validation
-
-**McNemar's test** (Custom CNN vs EfficientNetB0, on test set predictions):
-
-|Both Correct|CNN Correct, Eff Wrong|CNN Wrong, Eff Correct|Both Wrong|Statistic|p-value|
-|-|-|-|-|-|-|
-|2,401|375|1,959|519|1073.65|**1.77 × 10⁻²³⁵**|
-
-The accuracy difference is significant at an overwhelming level. EfficientNetB0 correctly classified 1,959 images that the custom CNN got wrong, while the custom CNN recovered only 375 images EfficientNetB0 missed — a \~5:1 asymmetry.
-
-**Per-class AUC with DeLong 95% confidence intervals** (Custom CNN vs EfficientNetB0):
-
-|Class|Custom CNN AUC (95% CI)|EfficientNetB0 AUC (95% CI)|
-|-|-|-|
-|bcc|0.776 (0.752–0.799)|0.986 (0.979–0.993)|
-|bkl|0.676 (0.650–0.701)|0.968 (0.958–0.979)|
-|df|0.786 (0.713–0.860)|0.983 (0.958–1.000)|
-|melanoma|0.645 (0.626–0.665)|0.928 (0.917–0.939)|
-|nevus|0.734 (0.721–0.747)|0.965 (0.961–0.970)|
-|vasc|0.907 (0.857–0.958)|1.000 (0.999–1.000)|
-
-Confidence intervals do not overlap between models for any class. The melanoma class — the most clinically critical category — shows the largest AUC improvement (0.645 → 0.928).
-
-### 3.7 Per-Class Performance (Test Set)
-
-Custom CNN — Macro F1 0.29
-
-|Class|Precision|Recall|F1|Support|
-|-|-|-|-|-|
-|bcc|0.35|0.09|0.15|576|
-|bkl|0.35|0.06|0.10|558|
-|df|0.04|0.45|0.07|53|
-|melanoma|0.33|0.24|0.28|1070|
-|nevus|0.69|0.81|0.74|2937|
-|vasc|0.38|0.42|0.40|60|
-
-MobileNetV2 — Macro F1 0.73
-
-|Class|Precision|Recall|F1|Support|
-|-|-|-|-|-|
-|bcc|0.75|0.82|0.78|576|
-|bkl|0.45|0.87|0.59|558|
-|df|0.53|0.77|0.63|53|
-|melanoma|0.69|0.62|0.65|1070|
-|nevus|0.94|0.79|0.86|2937|
-|vasc|0.89|0.90|0.89|60|
-
-EfficientNetB0 — Macro F1 0.81
-
-|Class|Precision|Recall|F1|Support|
-|-|-|-|-|-|
-|bcc|0.80|0.85|0.83|576|
-|bkl|0.66|0.84|0.74|558|
-|df|0.79|0.77|0.78|53|
-|melanoma|0.69|0.75|0.72|1070|
-|nevus|0.94|0.85|0.89|2937|
-|vasc|0.87|1.00|0.93|60|
-
-ResNet50 — Macro F1 0.85
-
-|Class|Precision|Recall|F1|Support|
-|-|-|-|-|-|
-|bcc|0.82|0.89|0.85|576|
-|bkl|0.77|0.83|0.80|558|
-|df|0.80|0.75|0.78|53|
-|melanoma|0.80|0.81|0.80|1070|
-|nevus|0.95|0.92|0.94|2937|
-|vasc|0.91|0.97|0.94|60|
-
-
-
-The custom CNN's per-class results reveal it defaults heavily toward the majority class (nevus, 81% recall) while almost completely failing on minority classes (bcc 9% recall, bkl 6% recall) — clinically dangerous behavior. All three pretrained models distribute predictions across all six classes with substantially higher per-class recall, including on the rarest classes (df: 53 test images, vasc: 60 test images).
-
-### 3.8 Interpretability — Grad-CAM
-
-Grad-CAM attention maps were generated for all four architectures on representative samples:
-
-|Figure|Description|
-|-|-|
-|[`results/figures/gradcam\\\_melanoma.png`](results/figures/gradcam_melanoma.png)|**Primary figure.** EfficientNetB0 is the only model to correctly classify this melanoma sample, with attention concentrated on the pigmented lesion. Custom CNN misclassifies as nevus with attention on an isolated, non-lesion hotspot.|
-|[`results/figures/gradcam\\\_bcc.png`](results/figures/gradcam_bcc.png)|Three of four pretrained models (MobileNetV2, EfficientNetB0, ResNet50) correctly classify with lesion-centered attention; Custom CNN misclassifies with scattered attention.|
-|[`results/figures/gradcam\\\_df.png`](results/figures/gradcam_df.png)|**Honest limitation example.** All four models misclassify this rare-class (df, 53 test images) sample, consistent with df's lower per-class recall across all models.|
-
-### 3.9 Confusion Matrices
-
-Normalized (per-class recall) confusion matrices for all four models: [`results/figures/confusion\\\_matrices\\\_all4.png`](results/figures/confusion_matrices_all4.png)
-
-The custom CNN's matrix shows mass concentrated toward the nevus and df columns regardless of true class. All three pretrained models show strong diagonal concentration across all six classes.
-
-\---
-
-## 4\. Environment \& Reproducibility
-
-|||
-|-|-|
-|**Framework**|TensorFlow / Keras 2.19.0|
-|**Hardware**|Kaggle Notebooks, Tesla T4 × 2 GPU|
-|**Image size**|224 × 224|
-|**Batch size**|32|
-|**Optimizer**|Adam (lr=1e-3 for frozen-backbone phase, lr=1e-5 for fine-tuning phase)|
-|**Loss**|Categorical cross-entropy with class weighting|
-|**Early stopping**|`val\\\_accuracy`, patience=7, restore best weights|
-
-**Reproducibility note:** Skin lesion experiments (this phase) were conducted without a fixed random seed; run-to-run variance of 1–4 percentage points was observed for continuation runs due to unseeded data augmentation. The reported metrics in §3.5–3.7 are from re-verified evaluations of the final saved checkpoints on the fixed test set (re-running `model.evaluate()` on the saved weights reproduces these numbers exactly). Future experiments (cross-source baseline, chest X-ray, diabetic retinopathy) will use a fixed seed (42) set before any data/model operations for full reproducibility.
-
-\---
-
-## 5\. Roadmap
-
-* \[x] Skin lesion: 4-model pooled training, evaluation, statistical validation, Grad-CAM, confusion matrices
-* \[ ] Skin lesion: cross-source baseline (train ISIC-only → test HAM-only, and vice versa)
-* \[ ] Skin lesion: Maximum Mean Discrepancy (MMD) domain gap quantification
-* \[ ] Skin lesion: fine-tuning depth ablation (frozen / partial / full)
-* \[ ] Skin lesion: CORAL baseline comparison
-* \[ ] Skin lesion: 5-fold cross-validation (mean ± std reporting)
-* \[ ] Chest X-ray classification (CheXpert, VinDr-CXR, NIH ChestX-ray14)
-* \[ ] Diabetic retinopathy grading (EyePACS, APTOS 2019, Messidor-2)
-* \[ ] Manuscript preparation and IEEE Access submission
-
-\---
-
-## 6\. Acknowledgments
-
-This project builds directly on prior work in CUDA-accelerated structural crack detection, which first surfaced the implicit-domain-adaptation pattern this study formalizes and tests.
-
-Portions of the code in this repository (data pipeline construction, model training scripts, statistical analysis, and visualization code) were developed with the assistance of **Claude (Anthropic)**. All AI-assisted code was reviewed, executed, and validated by the authors, who take full responsibility for the correctness of all results reported here.
-
-\---
-
-## 7\. Citation
-
-If you use this work, please cite (paper details to be updated upon publication):
-
-```bibtex
-@article{nair2026implicit,
-  title={Implicit Domain Adaptation Through Pretrained Feature Reuse: An Empirical Study of Lightweight Transfer Learning Across Heterogeneous Medical Imaging Sources},
-  author={Nair, Abhay Sivakumar and Andra, Shruthi},
-  journal={IEEE Access (submitted)},
-  year={2026}
-}
-```
-
+Every task folder is self-contained: its README documents the exact dataset paths, verified counts, split logic, class weights, environment pins, and stage-by-stage status needed to reproduce that task independently. Start with the task-specific README for implementation detail, this document exists only to orient across all three.
