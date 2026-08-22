@@ -1,0 +1,21 @@
+model,grade,source,border_attention_fraction,flag
+Custom CNN,0,eyepacs,0.473,True
+Custom CNN,1,eyepacs,0.434,True
+Custom CNN,2,aptos,0.28,False
+Custom CNN,3,aptos,0.491,True
+Custom CNN,4,eyepacs,0.732,True
+MobileNetV2,0,eyepacs,0.432,True
+MobileNetV2,1,eyepacs,0.386,True
+MobileNetV2,2,aptos,0.349,False
+MobileNetV2,3,aptos,0.438,True
+MobileNetV2,4,eyepacs,0.277,False
+EfficientNetB0,0,eyepacs,0.69,True
+EfficientNetB0,1,eyepacs,0.612,True
+EfficientNetB0,2,aptos,0.64,True
+EfficientNetB0,3,aptos,0.243,False
+EfficientNetB0,4,eyepacs,0.186,False
+ResNet50,0,eyepacs,0.377,True
+ResNet50,1,eyepacs,0.23,False
+ResNet50,2,aptos,0.341,False
+ResNet50,3,aptos,0.847,True
+ResNet50,4,eyepacs,0.668,True

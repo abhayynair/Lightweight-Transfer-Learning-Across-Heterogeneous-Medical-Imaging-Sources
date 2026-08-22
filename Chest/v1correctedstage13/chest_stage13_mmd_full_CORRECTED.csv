@@ -1,0 +1,37 @@
+model_type,arch,source_a,source_b,extraction_model_source,mmd_squared,gamma,mmd
+single_source,Custom CNN,chex,nih,chex,0.15396774,0.27463305,0.39238724
+single_source,Custom CNN,chex,nih,nih,0.19327283,0.27463305,0.43962806
+single_source,Custom CNN,chex,vinbig,chex,0.1640954,0.27463305,0.4050869
+single_source,Custom CNN,chex,vinbig,vinbig,0.043813705,0.27463305,0.20931724
+single_source,Custom CNN,nih,vinbig,nih,0.011589527,0.27463305,0.10765467
+single_source,Custom CNN,nih,vinbig,vinbig,0.020920157,0.27463305,0.14463802
+single_source,EfficientNetB0,chex,nih,chex,0.06944752,0.27463305,0.26352897
+single_source,EfficientNetB0,chex,nih,nih,0.16074705,0.27463305,0.40093273
+single_source,EfficientNetB0,chex,vinbig,chex,0.12312412,0.27463305,0.35089046
+single_source,EfficientNetB0,chex,vinbig,vinbig,0.25336206,0.27463305,0.50335085
+single_source,EfficientNetB0,nih,vinbig,nih,0.043525696,0.27463305,0.20862813
+single_source,EfficientNetB0,nih,vinbig,vinbig,0.053500414,0.27463305,0.23130156
+single_source,MobileNetV2,chex,nih,chex,0.091703296,0.27463305,0.3028255
+single_source,MobileNetV2,chex,nih,nih,0.18589497,0.27463305,0.43115538
+single_source,MobileNetV2,chex,vinbig,chex,0.13696396,0.27463305,0.37008643
+single_source,MobileNetV2,chex,vinbig,vinbig,0.14887774,0.27463305,0.3858468
+single_source,MobileNetV2,nih,vinbig,nih,0.009473085,0.27463305,0.09732977
+single_source,MobileNetV2,nih,vinbig,vinbig,0.048148155,0.27463305,0.21942689
+single_source,ResNet50,chex,nih,chex,0.1561476,0.27463305,0.39515516
+single_source,ResNet50,chex,nih,nih,0.23253524,0.27463305,0.48221907
+single_source,ResNet50,chex,vinbig,chex,0.24971938,0.27463305,0.4997193
+single_source,ResNet50,chex,vinbig,vinbig,0.27029335,0.27463305,0.51989746
+single_source,ResNet50,nih,vinbig,nih,0.015839934,0.27463305,0.1258568
+single_source,ResNet50,nih,vinbig,vinbig,0.056693792,0.27463305,0.23810458
+pooled,Custom CNN,chex,nih,pooled,0.14361382,0.27463305,0.37896413
+pooled,Custom CNN,chex,vinbig,pooled,0.33341372,0.27463305,0.5774199
+pooled,Custom CNN,nih,vinbig,pooled,0.09734726,0.27463305,0.31200522
+pooled,EfficientNetB0,chex,nih,pooled,0.23185635,0.27463305,0.48151463
+pooled,EfficientNetB0,chex,vinbig,pooled,0.30292583,0.27463305,0.55038697
+pooled,EfficientNetB0,nih,vinbig,pooled,0.08298242,0.27463305,0.2880667
+pooled,MobileNetV2,chex,nih,pooled,0.3438419,0.27463305,0.58638036
+pooled,MobileNetV2,chex,vinbig,pooled,0.38962305,0.27463305,0.6241979
+pooled,MobileNetV2,nih,vinbig,pooled,0.049740553,0.27463305,0.2230259
+pooled,ResNet50,chex,nih,pooled,0.35166883,0.27463305,0.59301674
+pooled,ResNet50,chex,vinbig,pooled,0.39768684,0.27463305,0.6306242
+pooled,ResNet50,nih,vinbig,pooled,0.097809315,0.27463305,0.3127448

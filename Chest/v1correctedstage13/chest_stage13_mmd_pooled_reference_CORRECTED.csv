@@ -1,0 +1,5 @@
+arch,model_type,mmd_squared,mmd
+Custom CNN,pooled,0.19145827,0.4227964
+EfficientNetB0,pooled,0.20592153,0.43998942
+MobileNetV2,pooled,0.2610685,0.47786805
+ResNet50,pooled,0.28238833,0.5121286

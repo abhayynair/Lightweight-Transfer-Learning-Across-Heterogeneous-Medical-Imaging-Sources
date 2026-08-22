@@ -1,0 +1,5 @@
+arch,mmd_single_source_avg,mmd_pooled,reduction,pct_reduction
+Custom CNN,0.2831187,0.4227964,-0.1396777,-49.3
+EfficientNetB0,0.32643878,0.43998942,-0.11355063,-34.8
+MobileNetV2,0.3011118,0.47786805,-0.17675626,-58.7
+ResNet50,0.37682542,0.5121286,-0.13530317,-35.9

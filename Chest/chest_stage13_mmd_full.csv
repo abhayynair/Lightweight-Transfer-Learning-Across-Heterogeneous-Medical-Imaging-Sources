@@ -1,0 +1,37 @@
+model_type,arch,source_a,source_b,extraction_model_source,mmd_squared,gamma,n_a,n_b,mmd
+single_source,Custom CNN,chex,nih,chex,0.3313974,0.027995573,500,500,0.57567126
+single_source,Custom CNN,chex,nih,nih,0.5099491,0.071182474,500,500,0.7141072
+single_source,Custom CNN,chex,vinbig,chex,0.33638752,0.028136615,500,500,0.57998925
+single_source,Custom CNN,chex,vinbig,vinbig,0.21180719,0.004842747,500,500,0.46022516
+single_source,Custom CNN,nih,vinbig,nih,0.019237518,0.1083054,500,500,0.13869938
+single_source,Custom CNN,nih,vinbig,vinbig,0.06195581,0.005786719,500,500,0.24890924
+single_source,EfficientNetB0,chex,nih,chex,0.09992981,0.014467552,500,500,0.31611678
+single_source,EfficientNetB0,chex,nih,nih,0.193151,0.020090243,500,500,0.43948948
+single_source,EfficientNetB0,chex,vinbig,chex,0.1823113,0.015451396,500,500,0.42697927
+single_source,EfficientNetB0,chex,vinbig,vinbig,0.34161657,0.006554253,500,500,0.58447975
+single_source,EfficientNetB0,nih,vinbig,nih,0.06966579,0.02425382,500,500,0.26394278
+single_source,EfficientNetB0,nih,vinbig,vinbig,0.08923185,0.007977714,500,500,0.298717
+single_source,MobileNetV2,chex,nih,chex,0.15359604,0.021355916,500,500,0.39191332
+single_source,MobileNetV2,chex,nih,nih,0.29459566,0.011361862,500,500,0.5427667
+single_source,MobileNetV2,chex,vinbig,chex,0.22287929,0.022705035,500,500,0.47210094
+single_source,MobileNetV2,chex,vinbig,vinbig,0.35732967,0.004079785,500,500,0.5977706
+single_source,MobileNetV2,nih,vinbig,nih,0.02116859,0.012233816,500,500,0.1454943
+single_source,MobileNetV2,nih,vinbig,vinbig,0.07288408,0.0055131055,500,500,0.26997054
+single_source,ResNet50,chex,nih,chex,0.3452438,0.012885521,500,500,0.58757454
+single_source,ResNet50,chex,nih,nih,0.26831043,0.0039336397,500,500,0.5179869
+single_source,ResNet50,chex,vinbig,chex,0.5755034,0.0119964555,500,500,0.7586194
+single_source,ResNet50,chex,vinbig,vinbig,0.36458194,0.0018089204,500,500,0.6038062
+single_source,ResNet50,nih,vinbig,nih,0.06881237,0.006404489,500,500,0.2623211
+single_source,ResNet50,nih,vinbig,vinbig,0.11423051,0.0025510124,500,500,0.33798006
+pooled,Custom CNN,chex,nih,pooled,0.7487437,0.015688075,500,500,0.86529976
+pooled,Custom CNN,chex,vinbig,pooled,0.6751527,0.008243981,500,500,0.8216768
+pooled,Custom CNN,nih,vinbig,pooled,0.16355443,0.014819219,500,500,0.40441862
+pooled,EfficientNetB0,chex,nih,pooled,0.33772326,0.010054322,500,500,0.5811396
+pooled,EfficientNetB0,chex,vinbig,pooled,0.38401932,0.0056991405,500,500,0.6196929
+pooled,EfficientNetB0,nih,vinbig,pooled,0.19275784,0.0074468977,500,500,0.43904197
+pooled,MobileNetV2,chex,nih,pooled,0.579041,0.0019054109,500,500,0.76094747
+pooled,MobileNetV2,chex,vinbig,pooled,0.5478761,0.001294751,500,500,0.7401866
+pooled,MobileNetV2,nih,vinbig,pooled,0.14360249,0.002332879,500,500,0.3789492
+pooled,ResNet50,chex,nih,pooled,0.62800413,0.00083793135,500,500,0.7924671
+pooled,ResNet50,chex,vinbig,pooled,0.52186,0.0004993327,500,500,0.72239876
+pooled,ResNet50,nih,vinbig,pooled,0.23368037,0.0012297138,500,500,0.48340496

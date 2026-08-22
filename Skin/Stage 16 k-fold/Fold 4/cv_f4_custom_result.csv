@@ -1,0 +1,2 @@
+fold,arch,accuracy,macro_f1,macro_auc,macro_sensitivity,macro_specificity,n_test
+4,custom,0.5233824471492633,0.3536575212959276,0.797573296012176,0.4483842976319865,0.893228590639807,4683
