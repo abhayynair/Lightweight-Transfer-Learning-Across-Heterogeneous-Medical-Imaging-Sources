@@ -146,6 +146,14 @@ Every pretrained model beats the custom CNN with McNemar's p_holm below 3.6e-19.
 
 Complete and saved. Grad-CAM exemplars selected systematically: test images where the custom CNN was wrong and all three pretrained models were correct. This surfaced 567 qualifying candidates, 501 no-finding and only 66 pathology, itself a visual confirmation of the CheXpert specificity problem.
 
+![Confusion matrices, all four pooled models, raw counts](https://raw.githubusercontent.com/abhayynair/Lightweight-Transfer-Learning-Across-Heterogeneous-Medical-Imaging-Sources/main/Chest/chest_stage10_confusion.png)
+
+*Confusion matrices, all four pooled models, pooled test set, raw counts.*
+
+![Grad-CAM, systematically selected exemplars, all four pooled models](https://raw.githubusercontent.com/abhayynair/Lightweight-Transfer-Learning-Across-Heterogeneous-Medical-Imaging-Sources/main/Chest/chest_stage10_gradcam.png)
+
+*Grad-CAM, pathology and no-finding exemplars where the custom CNN was wrong and all three pretrained models were correct.*
+
 ### Stage 11, single-source baseline, all 12 models complete
 
 | Architecture | Source | AUC | Accuracy | Sensitivity | Specificity |
