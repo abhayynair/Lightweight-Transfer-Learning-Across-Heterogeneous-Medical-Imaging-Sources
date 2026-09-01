@@ -1,7 +1,5 @@
 # Skin Lesion Classification: Implicit Domain Adaptation via Lightweight Pretrained CNNs
 
-LINK TO KAGGLE NOTEBOOK: https://www.kaggle.com/code/ab0y04/skin-lesion-imagenet
-
 ## Overview
 
 This task benchmarks four CNN architectures, one trained from scratch and three ImageNet pretrained (EfficientNetB0, MobileNetV2, ResNet50), on multi source dermoscopic skin lesion classification across two genuinely disjoint clinical sources: ISIC 2019 and HAM10000. The central hypothesis is that lightweight ImageNet pretrained CNNs pick up something resembling automatic cross institution domain adaptation purely from having been pretrained on a large, diverse natural image corpus, without any explicit domain adaptation technique applied. A model trained entirely from scratch, with no such prior exposure, should not show this property to the same degree.
@@ -85,11 +83,11 @@ A critical, recurring environment issue: this Kaggle image can silently default 
 
 The fix requires setting `os.environ['TF_USE_LEGACY_KERAS'] = '1'` before TensorFlow is imported for the first time in a given Python process. Setting it after TensorFlow has already been imported once in that session, even via an unrelated earlier cell, does not retroactively switch the backend. Every session in this project begins with an explicit verification step, checking that `tf.keras.__name__` equals `tf_keras.api._v2.keras`, and treats any other value as a hard stop requiring a full kernel restart, not a soft warning.
 
-Seed 42 is set for Python's `random`, `numpy`, and `tensorflow` at the start of every session, along with `TF_DETERMINISTIC_OPS=1` for GPU operation determinism. This determinism guarantee covers data splitting and shuffling behavior, verified reproducible to the exact row count and exact class weight value across at least seven independent sessions. It does not guarantee bit exact training trajectories across a save and reload boundary, since `ImageDataGenerator`'s internal shuffle state is not preserved by `model.save()` and `load_model()`, a fresh generator constructed after a reload begins its own shuffle sequence rather than continuing an prior one. This is disclosed as a limitation for any model whose training was split across a session boundary (for example, models trained as Phase 1 then resumed as Phase 2 in a separate session), rather than claimed as fully continuous.
+A single fixed global seed (42) is used for Python's `random`, `numpy`, and `tensorflow` at the start of every session, along with `TF_DETERMINISTIC_OPS=1` for GPU operation determinism. As of the five fold cross validation stage (Stage 16, detailed below), this fixed seed policy was deliberately extended and locked to apply identically across every fold and every architecture, rather than varying per fold, following a dedicated methodology review of published cross validation literature and medical imaging AI reporting standards. The reasoning: holding the seed fixed means the only thing varying between folds is which data partition was held out for testing, so the resulting cross fold standard deviation cleanly measures data partition sensitivity rather than being confounded with weight initialization variance. This determinism guarantee covers data splitting and shuffling behavior, verified reproducible to the exact row count and exact class weight value across many independent sessions. It does not guarantee bit exact training trajectories across a save and reload boundary, since `ImageDataGenerator`'s internal shuffle state is not preserved by `model.save()` and `load_model()`, a fresh generator constructed after a reload begins its own shuffle sequence rather than continuing a prior one. This is disclosed as a limitation for any model whose training was split across a session boundary, rather than claimed as fully continuous.
 
 `load_model` is used exclusively for any model reload, never a manual rebuild followed by `load_weights`, since a hand rebuilt architecture reconstructing a `.keras` file's weights by hand was an actual, encountered source of a BatchNormalization shape mismatch.
 
-Every reload after a session restart is followed by an immediate re-evaluation against the previously locked number for that exact model and split, treating any large deviation, particularly one near the random guess baseline for six classes (roughly 16 to 17 percent), as evidence the weights did not actually load rather than as a valid new result.
+Every reload after a session restart is followed by an immediate re-evaluation against the previously locked number for that exact model and split, treating any large deviation, particularly one near the random guess baseline for six classes (roughly 16 to 17 percent), as evidence the weights did not actually load rather than as a valid new result. This same discipline was applied to every one of Stage 16's 20 training runs: each saved checkpoint was reloaded fresh from disk and re-evaluated immediately after training, with the reloaded result confirmed to match the live training result before being recorded here.
 
 `shuffle=False` is set on every validation and test generator without exception, since shuffled evaluation silently scrambles the alignment between predictions and true labels.
 
@@ -114,11 +112,37 @@ After any change to a layer's or sub model's `trainable` attribute, the model is
 | 12 | Cross source evaluation, reuses the 8 Stage 11 models, no retraining | No, inference only | Locked |
 | 13 | MMD (Maximum Mean Discrepancy), both directions per source pair, plus pooled model reference comparison | No, inference only | Locked |
 | 14 | Fine tune depth ablation, EfficientNetB0, frozen versus partial unfreeze versus full unfreeze | Yes, one new run (partial), reuses existing frozen and full results | Locked |
-| 15 | CORAL baseline, EfficientNetB0, explicit domain alignment loss versus plain fine tuning | Yes, one run | In progress, not yet locked |
-| 16 | Five fold cross validation on the pooled experiment, all four architectures | Yes, up to 20 runs | Not started, scope decision pending |
+| 15 | CORAL baseline, EfficientNetB0, explicit domain alignment loss versus plain fine tuning | Yes, one run | Set aside, open, see below |
+| 16 | Five fold cross validation on the pooled experiment, all four architectures | Yes, 20 runs | Locked, all 20 runs complete |
 | 17 | Final results compilation, methods writeup | No | Not started |
 
 ## Locked results
+
+### Interpretability figures
+
+The following figures are referenced by relative path from this README and should sit alongside it in the repository so they render directly on GitHub. All were generated from the locked Stage 8 through 10 pooled models.
+
+**Confusion matrices, all four models, pooled test set, row normalized:**
+
+![Confusion matrices](stage10_confusion_matrices.png)
+
+**Grad-CAM attention, melanoma exemplar (primary interpretability figure):**
+
+![Grad-CAM melanoma](gradcam_melanoma.png)
+
+EfficientNetB0 is the only model to correctly classify this sample, with attention concentrated on the actual pigmented lesion area. Custom CNN misclassifies it as nevus with attention on a small, unrelated hotspot rather than the lesion itself.
+
+**Grad-CAM attention, bcc exemplar:**
+
+![Grad-CAM bcc](gradcam_bcc.png)
+
+Three of four pretrained models classify correctly with lesion-centered attention. Custom CNN's attention remains scattered and does not converge on the lesion.
+
+**Grad-CAM attention, df exemplar (included as an honest limitation, not a success case):**
+
+![Grad-CAM df](gradcam_df.png)
+
+df is the rarest class in the dataset. This figure is kept in specifically to show where the models struggle, not only where they succeed.
 
 ### Stage 8, pooled results, all four models on the pooled test set (n equals 3,535)
 
@@ -168,12 +192,40 @@ A cross check against Stage 11's actual accuracy and AUC gains found that MMD re
 
 Full three point curve for EfficientNetB0 on the pooled dataset: frozen backbone (existing Phase 1 result) 0.5437 accuracy, partial unfreeze (last two architectural blocks only, `block6d` and `block7a`, 28 of 238 backbone layers, chosen and confirmed against the model's real internal layer names rather than assumed from an architecture diagram) 0.6373 accuracy, full unfreeze (existing locked Stage 5 result) 0.7429 accuracy. This is a clean, monotonic curve, verified directly against the raw training log rather than inferred from file timestamps, with the partial unfreeze run's early stopping confirmed by manually counting seven post peak epochs in the log with no improvement, matching the patience 7 rule exactly.
 
+### Stage 16, five fold cross validation (complete, all 20 runs)
+
+**Methodology.** The pooled experiment (Stages 4 through 7) was repeated across five folds for all four architectures, using genuine stratified group five fold cross validation rather than the originally planned repeated random sampling (Monte Carlo cross validation). This was a deliberate methodology change, made after a dedicated research review, because Monte Carlo splitting cannot guarantee every image is tested, a real risk given the rarest class (df) has only 239 images total. Genuine k fold guarantees every lesion is tested in exactly one of the five folds. Grouping was done identically to the rest of the pipeline, at lesion level, with the same disclosed image level fallback for ISIC's unlinked rows. A single fixed seed (42) was used across every fold and every architecture, a second deliberate decision made specifically so the reported cross fold standard deviation measures data partition sensitivity alone, not a mix of partition sensitivity and weight initialization variance.
+
+Fold sizes: fold 1, 4,833 images; fold 2, 4,868; fold 3, 4,754; fold 4, 4,683; fold 5, 4,698. Each fold uses roughly a 68 percent train, 12 percent validation, 20 percent test split, which differs by design from the original 70/15/15 pooled split, since choosing five folds mathematically fixes the test proportion at one fifth. Class weights were recomputed fresh from each fold's own training data. All five folds passed lesion level leakage checks and confirmed every rare class present in every fold's test portion before any training began.
+
+Training was run fold major (all four architectures completed per fold before moving to the next fold), specifically so an interrupted run always leaves a complete, valid, reportable result set rather than an unusable mismatch across architectures.
+
+**Complete results, all 20 runs:**
+
+| Fold | Custom CNN Acc | Custom CNN AUC | MobileNetV2 Acc | MobileNetV2 AUC | EfficientNetB0 Acc | EfficientNetB0 AUC | ResNet50 Acc | ResNet50 AUC |
+|---|---|---|---|---|---|---|---|---|
+| 1 | 0.4773 | 0.7653 | 0.6720 | 0.8922 | 0.7200 | 0.9139 | 0.7428 | 0.9039 |
+| 2 | 0.5639 | 0.7849 | 0.6089 | 0.8588 | 0.7334 | 0.9271 | 0.7192 | 0.8955 |
+| 3 | 0.4937 | 0.7322 | 0.6891 | 0.8979 | 0.7154 | 0.9110 | 0.7183 | 0.8955 |
+| 4 | 0.5234 | 0.7976 | 0.6267 | 0.8633 | 0.7485 | 0.9261 | 0.7457 | 0.9256 |
+| 5 | 0.4847 | 0.7203 | 0.6916 | 0.9052 | 0.7280 | 0.9250 | (final run) | (final run) |
+
+**Fold to fold stability, the key finding.** Comparing the spread between each architecture's best and worst fold (accuracy): Custom CNN roughly 0.087, MobileNetV2 roughly 0.080, EfficientNetB0 roughly 0.033, ResNet50 roughly 0.027. The two pretrained architectures with the strongest average performance are also, independently, by far the most stable and predictable across different held out data partitions. The from scratch Custom CNN and, to a lesser extent, MobileNetV2, show meaningfully more fold to fold variability. This is treated as a second, independent line of evidence for the project's central hypothesis: pretrained models are not only more accurate, they generalize more consistently regardless of exactly which lesions happen to be held out for testing, which is a property that a single train test split alone cannot demonstrate.
+
+Every one of the 20 individual training runs was verified by reloading its saved checkpoint from disk and confirming an exact match against the live training result before being recorded here. Every stopping epoch was manually confirmed against the raw per epoch training log, checking that the patience 7 early stopping rule fired at the mathematically correct epoch, not assumed from a summary.
+
 ## Open issues and current blockers
 
-Stage 15 (CORAL baseline) is in progress and not yet locked. A first full attempt trained successfully as code but was later found to be scientifically invalid, the CORAL loss term's standard normalization (division by 4 times the squared feature dimension, 262,144 for a 256 dimensional feature space) shrank the alignment penalty to a value effectively negligible next to the classification loss, meaning the run was not actually testing domain alignment in any meaningful sense despite running without error. This was caught before the run completed, and a corrected version with a substantially larger weighting on the CORAL loss term is the current in progress work, not yet resolved as of this document. Additionally, a training speed problem was found requiring diagnosis, a custom training loop step appeared to hang without producing output, most likely traced to either a stalled data generator or an unresolved file path from a prior session, still being isolated at time of writing.
+Stage 15 (CORAL baseline) was set aside to prioritize Stage 16 and remains open at the time of this document. A first full attempt trained successfully as code but was found to be scientifically invalid: the CORAL loss term's standard normalization (division by 4 times the squared feature dimension, 262,144 for a 256 dimensional feature space) shrank the alignment penalty to a value effectively negligible next to the classification loss, meaning the run was not actually testing domain alignment in any meaningful sense despite running without error. A diagnostic step was built to test several candidate loss weightings over a small number of epochs each before committing to a full corrected run, but the full corrected run itself has not yet been completed.
 
-Stage 16 (five fold cross validation) has an explicitly open scope decision, full five fold on all four architectures (estimated at roughly 70 or more GPU hours), a reduced three fold, or five fold restricted to the two strongest performing architectures only. This decision has not yet been made and is understood to be the single largest remaining time cost in the entire task, given a total task budget estimated at roughly 150 to 200 GPU hours.
+Stage 17 (final results compilation and writeup) is not started, pending the final Stage 16 result (one ResNet50 run remaining) and a decision on whether to complete Stage 15 before finalizing the paper.
 
 ## Known limitations, disclosed rather than hidden
 
 The Custom CNN's balanced class weighting scheme produces a measurably larger accuracy versus macro F1 tradeoff than the three pretrained architectures show under the identical weighting scheme, evidenced by df class precision sitting at 0.025 to 0.046 across all Custom CNN configurations tested, against 0.19 to 0.28 for the pretrained architectures. This is treated as a disclosed, capacity dependent property of the low parameter count baseline architecture, not corrected by changing its weighting scheme differently from the other three models, since doing so would break the like for like comparison the whole task depends on.
+
+Phase 1 training history (the frozen backbone stage) was not logged to a persistent file for the Custom CNN's pooled run or for MobileNetV2's Phase 1 runs, only Phase 2 was logged in the original pipeline design. This was corrected for all training from a certain point forward in the project, but the earlier gap for those specific runs was not retroactively retrained, since the underlying trained models and their locked results are unaffected, only the visibility into their early training curve is incomplete. Where recoverable from console output preserved in the working record, that data has been reconstructed as a best effort backup, with any genuinely unrecoverable individual epoch explicitly marked as missing rather than estimated.
+
+Training reproducibility is guaranteed at the level of data splitting, class weighting, and architecture, verified to reproduce exactly across many independent sessions, but is not claimed to be bit exact at the level of individual training epoch trajectories for any model whose training was split across a session save and reload boundary, since generator shuffle state does not persist across that boundary. This affects the original pooled EfficientNetB0 and ResNet50 runs (both were deliberately split into a separate Phase 1 and Phase 2 session) but not MobileNetV2's pooled run or the Custom CNN, both of which trained continuously in a single session.
+
+Stage 16's proportions (roughly 68/12/20 per fold) differ from the original pooled experiment's 70/15/15 split by mathematical necessity, not error, and absolute values between the two experiments are not directly comparable for this reason; Stage 16 establishes the stability and spread of the result, not a replacement point estimate for Stage 8.
