@@ -99,9 +99,6 @@ Custom CNN's pooled checkpoint never once predicts grade 2 in the entire test se
 ![Grad-CAM, one exemplar per grade](./Diabetic%20Retinopathy/dr_stage10_gradcam.png)
 *Green border = correct, red = wrong. A pre-registered border-attention check flagged 13 of 20 exemplar/model combinations for possible shape-shortcut attention, 8 of the 13 EyePACS-sourced, plausibly linked to that source's wide resolution variation getting resized without letterboxing. Flagged as needing visual inspection, not treated as proven.*
 
-## Worth double-checking
-
-The custom CNN's reported parameter count differs a lot across tasks despite the architecture being described identically in all three: 323,366 (skin, 6-class head), 322,338 (chest, binary head), 23,109 (DR, 5-class head). A softmax head size difference of a few classes shouldn't account for a ~300,000-parameter gap on its own, worth confirming the DR figure before it goes in the paper.
 
 ## Reproducing this work
 
